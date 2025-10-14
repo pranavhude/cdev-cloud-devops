@@ -13,3 +13,5 @@
 *.pem
 *.pub
 
+.terraform/
+.terraform.lock.hcl
