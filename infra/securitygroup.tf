@@ -6,15 +6,14 @@
 resource "aws_security_group" "bastion_sg" {
   name        = "${var.project}-bastion-sg"
   vpc_id      = aws_vpc.this.id
-  description = "Allow SSH access from your IP"
+  description = "Allow SSH access to bastion host"
 
   ingress {
-    description = "Allow SSH from your IP"
+    description = "Allow SSH from your IP (replace 0.0.0.0/0)"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    # ⚠️ Replace with your IP (example: "49.32.145.10/32")
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["0.0.0.0/0"] # CHANGE this to your IP e.g. "1.2.3.4/32"
   }
 
   egress {
@@ -31,14 +30,14 @@ resource "aws_security_group" "bastion_sg" {
 resource "aws_security_group" "eks_nodes_sg" {
   name        = "${var.project}-eks-nodes-sg"
   vpc_id      = aws_vpc.this.id
-  description = "Allow node-to-node and internal traffic"
+  description = "EKS node group SG - allow node and pod traffic"
 
   ingress {
     from_port   = 0
     to_port     = 65535
     protocol    = "tcp"
     cidr_blocks = ["10.0.0.0/8"]
-    description = "Allow all traffic within VPC"
+    description = "Allow internal VPC traffic"
   }
 
   egress {
@@ -55,14 +54,14 @@ resource "aws_security_group" "eks_nodes_sg" {
 resource "aws_security_group" "alb_sg" {
   name        = "${var.project}-alb-sg"
   vpc_id      = aws_vpc.this.id
-  description = "Allow inbound HTTP from the Internet"
+  description = "Allow HTTP from internet"
 
   ingress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
-    description = "Allow HTTP traffic"
+    description = "Allow HTTP"
   }
 
   egress {
@@ -75,7 +74,7 @@ resource "aws_security_group" "alb_sg" {
   tags = { Name = "${var.project}-alb-sg" }
 }
 
-# RDS Security Group (allow MySQL only from EKS)
+# RDS Security Group (allow MySQL only from EKS nodes)
 resource "aws_security_group" "rds_sg" {
   name        = "${var.project}-rds-sg"
   vpc_id      = aws_vpc.this.id

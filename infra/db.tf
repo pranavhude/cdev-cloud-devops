@@ -8,10 +8,10 @@ resource "random_password" "db_password" {
   special = true
 }
 
-# Create a DB subnet group (for RDS to use private subnets)
+# Create a DB subnet group (for RDS in private subnets)
 resource "aws_db_subnet_group" "db_subnets" {
   name       = "${var.project}-db-subnet-group"
-  subnet_ids = aws_subnet.private[*].id
+  subnet_ids = values(aws_subnet.private)[*].id
 
   tags = {
     Name = "${var.project}-db-subnet-group"

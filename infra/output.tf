@@ -1,5 +1,5 @@
 # -----------------------------
-# TERRAFORM OUTPUTS
+# TERRAFORM OUTPUTS (single source)
 # -----------------------------
 
 # ECR Repository URL (for Docker pushes)
